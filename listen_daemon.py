@@ -34,12 +34,19 @@ pygst.require('0.10')
 gobject.threads_init()
 import gst
 
-class ListenerDaemon(object):
+import dbus
+import dbus.service
+import dbus.mainloop.glib
+
+class ListenerDaemon(dbus.service.Object):
     """GStreamer/PocketSphinx Demo Application"""
-    def __init__(self):
+    def __init__(self, conn, object_path="/org/dustycloud/EmacsListen/daemon"):
         """Initialize a ListenerDaemon object"""
+        dbus.service.Object.__init__(self, conn, object_path)
+
         self.init_gui()
         self.init_gst()
+        self.init_dbus()
 
     def init_gui(self):
         """Initialize the GUI components"""
@@ -74,6 +81,12 @@ class ListenerDaemon(object):
 
         self.pipeline.set_state(gst.STATE_PAUSED)
 
+    def init_dbus(self):
+        """
+        Set ourselves up so we become a proper dbus object
+        """
+        pass
+
     def asr_partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
         struct = gst.Structure('partial_result')
@@ -98,6 +111,8 @@ class ListenerDaemon(object):
             self.pipeline.set_state(gst.STATE_PAUSED)
             self.button.set_active(False)
 
+    @dbus.service.signal(dbus_interface="org.dustycloud.EmacsListen",
+                         signature="su")
     def partial_result(self, hyp, uttid):
         """Delete any previous selection, insert text and select it."""
         # All this stuff appears as one single action
@@ -110,6 +125,8 @@ class ListenerDaemon(object):
         self.textbuf.move_mark(ins, iter)
         self.textbuf.end_user_action()
 
+    @dbus.service.signal(dbus_interface="org.dustycloud.EmacsListen",
+                         signature="su")
     def final_result(self, hyp, uttid):
         """Insert the final result."""
         # All this stuff appears as one single action
@@ -128,5 +145,12 @@ class ListenerDaemon(object):
             vader = self.pipeline.get_by_name('vad')
             vader.set_property('silent', True)
 
-app = ListenerDaemon()
-gtk.main()
+
+if __name__ == "__main__":
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
+    session_bus = dbus.SessionBus()
+    name = dbus.service.BusName('org.dustycloud.EmacsListen', session_bus)
+
+    app = ListenerDaemon(session_bus)
+    gtk.main()

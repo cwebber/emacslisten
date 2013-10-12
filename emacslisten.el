@@ -18,3 +18,12 @@
 ;; This doesn't do anything yet.  I sure hope it will, though :)
 
 
+(defun emacslisten-handle-partial-result (hyp uttid)
+  (message "Got '%s' with id '%s'" hyp uttid))
+
+(dbus-register-signal
+ :session
+ "org.dustycloud.EmacsListen" "/org/dustycloud/EmacsListen/daemon"
+ "org.dustycloud.EmacsListen" "PartialResult"
+ 'emacslisten-handle-partial-result)
+ 
