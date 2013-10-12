@@ -46,7 +46,6 @@ class ListenerDaemon(dbus.service.Object):
 
         self.init_gui()
         self.init_gst()
-        self.init_dbus()
 
     def init_gui(self):
         """Initialize the GUI components"""
@@ -80,12 +79,6 @@ class ListenerDaemon(dbus.service.Object):
         bus.connect('message::application', self.application_message)
 
         self.pipeline.set_state(gst.STATE_PAUSED)
-
-    def init_dbus(self):
-        """
-        Set ourselves up so we become a proper dbus object
-        """
-        pass
 
     def asr_partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
