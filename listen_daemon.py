@@ -58,7 +58,8 @@ class ListenerDaemon(dbus.service.Object):
         self.text = gtk.TextView(self.textbuf)
         self.text.set_wrap_mode(gtk.WRAP_WORD)
         vbox.pack_start(self.text)
-        self.button = gtk.ToggleButton("Speak")
+        self.button = gtk.ToggleButton("Stop")
+        self.button.set_active(True)
         self.button.connect('clicked', self.button_clicked)
         vbox.pack_start(self.button, False, False, 5)
         self.window.add(vbox)
@@ -78,7 +79,7 @@ class ListenerDaemon(dbus.service.Object):
         bus.add_signal_watch()
         bus.connect('message::application', self.application_message)
 
-        self.pipeline.set_state(gst.STATE_PAUSED)
+        self.pipeline.set_state(gst.STATE_PLAYING)
 
     def asr_partial_result(self, asr, text, uttid):
         """Forward partial result signals on the bus to the main thread."""
@@ -101,8 +102,8 @@ class ListenerDaemon(dbus.service.Object):
             self.partial_result(msg.structure['hyp'], msg.structure['uttid'])
         elif msgtype == 'result':
             self.final_result(msg.structure['hyp'], msg.structure['uttid'])
-            self.pipeline.set_state(gst.STATE_PAUSED)
-            self.button.set_active(False)
+            # self.pipeline.set_state(gst.STATE_PAUSED)
+            # self.button.set_active(False)
 
     @dbus.service.signal(dbus_interface="org.dustycloud.EmacsListen",
                          signature="su")
