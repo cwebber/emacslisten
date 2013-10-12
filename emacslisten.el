@@ -21,17 +21,19 @@
 (defun emacslisten-handle-partial-result (hyp uttid)
   (message "Partial: %s" hyp))
 
-(dbus-register-signal
- :session
- "org.dustycloud.EmacsListen" "/org/dustycloud/EmacsListen/daemon"
- "org.dustycloud.EmacsListen" "partial_result"
- 'emacslisten-handle-partial-result)
- 
 (defun emacslisten-handle-final-result (hyp uttid)
   (message "Result: %s" hyp))
 
-(dbus-register-signal
- :session
- "org.dustycloud.EmacsListen" "/org/dustycloud/EmacsListen/daemon"
- "org.dustycloud.EmacsListen" "final_result"
- 'emacslisten-handle-final-result)
+(defun emacslisten-connect-to-daemon ()
+  (interactive)
+  (dbus-register-signal
+   :session
+   "org.dustycloud.EmacsListen" "/org/dustycloud/EmacsListen/daemon"
+   "org.dustycloud.EmacsListen" "final_result"
+   'emacslisten-handle-final-result)
+  (dbus-register-signal
+   :session
+   "org.dustycloud.EmacsListen" "/org/dustycloud/EmacsListen/daemon"
+   "org.dustycloud.EmacsListen" "partial_result"
+   'emacslisten-handle-partial-result))
+  
