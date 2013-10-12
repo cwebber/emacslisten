@@ -1,5 +1,24 @@
-* Braindump
+* What is it?
 
-Okay, basic idea behind emacslisten gets dumped here!
+Emacslisten doesn't do much yet, but the idea is, eventually, a fully free
+software driven voice-to-text/code system for emacs using the super awesome
+[[http://cmusphinx.sourceforge.net/][CMU Sphinx]] system, and d-bus.  (Other transports may eventually be supported.)
 
-Actually, http://dustycloud.org/blog/emacslisten/ :)
+More behind the idea in my [[http://dustycloud.org/blog/emacslisten/][original blogpost]]! :)
+
+* How do I use it?
+
+Not much to see yet.  However, this does work:
+
+: ./python listen_daemon.py
+
+Which will start up a gui.
+
+Then:
+
+#+BEGIN_SRC emacs-lisp
+(load-file "~/path/to/emacslisten/emacslisten.el")
+#+END_SRC
+
+Press the speak button in the GUI... it should appear, likewise, in the emacs
+mode line.
