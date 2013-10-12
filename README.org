@@ -1,0 +1,5 @@
+* Braindump
+
+Okay, basic idea behind emacslisten gets dumped here!
+
+Actually, http://dustycloud.org/blog/emacslisten/ :)
